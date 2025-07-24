@@ -39,7 +39,12 @@ if st.button("📨 Send Emails"):
                 st.error("Excel file must have a column named 'Email'.")
             else:
                 if "nombre" not in df.columns:
-                    df["nombre"] = ""
+                    df["nombre"] = df["email"].apply(lambda x: x.split('@')[0])
+                else:
+                    # Rellenar los valores faltantes en 'nombre' con la parte local del email
+                    df["nombre"] = df["nombre"].fillna('').astype(str)
+                    df.loc[df["nombre"].str.strip() == "", "nombre"] = df["email"].apply(lambda x: x.split('@')[0])
+
 
                 st.info("Sending emails... This may take a moment.")
                 context = ssl.create_default_context()
